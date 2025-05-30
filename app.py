@@ -97,6 +97,7 @@ def api_get_toggle(name):
 @app.route('/api/summary', methods=['POST'])
 def api_set_summary():
     set_summary_state(1)
+    print('[LOG] https://hook.us2.make.com/nfn1o12mipr44rbnh2ry70d39p26djsm')
     return Response('ok', mimetype='text/plain')
 
 @app.route('/toggleset/<val>', methods=['GET'])
