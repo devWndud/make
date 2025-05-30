@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template_string, request, Response
 import sqlite3
 import os
-import requests
+import requests 
 
 app = Flask(__name__)
 
@@ -113,18 +113,12 @@ def api_toggle_reset_get(val):
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    toggles = get_toggles()
-    toggle_infos = [
-        {"name": "기능1", "desc": "이것은 첫 번째 임시 기능입니다."},
-        {"name": "기능2", "desc": "이것은 두 번째 임시 기능입니다."},
-        {"name": "기능3", "desc": "이것은 세 번째 임시 기능입니다."},
-    ]
     return render_template_string('''
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>다크모드 토글</title>
+    <title>필기 요약 프로그램</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -137,99 +131,13 @@ def dashboard():
             align-items: center;
             justify-content: center;
         }
-        .container {
-            background: #23272F;
-            border-radius: 24px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-            padding: 48px 32px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 32px;
-        }
-        .toggle-group {
-            display: flex;
-            gap: 32px;
-        }
-        .toggle-card {
-            background: #23272F;
-            border-radius: 18px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-            padding: 32px 28px 24px 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 220px;
-            max-width: 260px;
-            gap: 18px;
-            border: 1.5px solid #353B45;
-        }
-        .toggle-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-        .toggle-desc {
-            font-size: 0.98rem;
-            color: #b0b8c1;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .toggle {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 56px;
-            height: 32px;
-        }
-        .switch input { display: none; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #353B45;
-            border-radius: 32px;
-            transition: background 0.2s;
-            border: 2px solid #444B55;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 4px;
-            bottom: 2px;
-            background: #23272F;
-            border-radius: 50%;
-            transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        input:checked + .slider {
-            background: #444B55;
-            border-color: #353B45;
-        }
-        input:checked + .slider:before {
-            transform: translateX(24px);
-            background: #b0b8c1;
-        }
-        .toggle-label {
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
         .summary-btn {
-            margin-top: 40px;
-            padding: 14px 38px;
+            padding: 18px 54px;
             background: #23272F;
             color: #fff;
             border: 2px solid #353B45;
             border-radius: 16px;
-            font-size: 1.08rem;
+            font-size: 1.18rem;
             font-weight: 700;
             letter-spacing: -0.5px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.10);
@@ -244,36 +152,11 @@ def dashboard():
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2 style="margin-bottom: 16px;">기능 토글</h2>
-        <div class="toggle-group">
-            {% for info in toggle_infos %}
-            <div class="toggle-card">
-                <div class="toggle-title">{{ info.name }}</div>
-                <div class="toggle-desc">{{ info.desc }}</div>
-                <div class="toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-{{ loop.index0 }}" {% if toggles[info.name] %}checked{% endif %} onchange="toggleSwitch('{{ info.name }}', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <button class="summary-btn" type="button" onclick="summaryClick()">필기 요약</button>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
+        <h2 style="margin-bottom: 0;">필기 요약 프로그램</h2>
+        <button class="summary-btn" type="button" onclick="summaryClick()">요약</button>
     </div>
     <script>
-        function toggleSwitch(name, state) {
-            fetch('/api/toggle', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, state: state })
-            }).then(res => res.json()).then(data => {
-                if (!data.success) {
-                    alert('상태 변경 실패');
-                }
-            });
-        }
         function summaryClick() {
             fetch('/api/summary', { method: 'POST' })
                 .then(res => res.text())
@@ -282,7 +165,7 @@ def dashboard():
     </script>
 </body>
 </html>
-''', toggles=toggles, toggle_infos=toggle_infos)
+''')
 
 @app.route('/subject/<subject>', methods=['GET'])
 def get_subject_id(subject):
