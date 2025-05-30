@@ -99,7 +99,7 @@ def api_get_toggle(name):
 def api_set_summary():
     set_summary_state(1)
     try:
-        requests.post('https://hook.us2.make.com/nfn1o12mipr44rbnh2ry70d39p26djsm', timeout=3)
+        requests.post('https://hook.us2.make.com/5tddl2jsto57fdsbiml5dhgw3ra8galg', timeout=3)
     except Exception as e:
         pass  # 실패해도 무시
     return Response('ok', mimetype='text/plain')
