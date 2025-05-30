@@ -91,10 +91,9 @@ def api_set_summary():
     set_summary_state(1)
     return Response('ok', mimetype='text/plain')
 
-@app.route('/toggleset', methods=['POST'])
-def api_toggle_reset():
-    data = request.get_data(as_text=True)
-    if data.strip() == '2':
+@app.route('/toggleset/<val>', methods=['GET'])
+def api_toggle_reset_get(val):
+    if val == '2':
         set_summary_state(0)
         return Response('reset', mimetype='text/plain')
     return Response('ignored', mimetype='text/plain')
