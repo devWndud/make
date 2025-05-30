@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template_string, request
+from flask import Flask, jsonify, render_template_string, request, Response
 import sqlite3
 import os
 
@@ -49,13 +49,13 @@ def api_set_toggle():
 @app.route('/api/toggle/<name>', methods=['GET'])
 def api_get_toggle(name):
     if not name.isdigit():
-        return jsonify({'error': 'name must be a number'}), 400
+        return Response('error', status=400, mimetype='text/plain')
     idx = int(name)
     if idx < 1 or idx > len(TOGGLES):
-        return jsonify({'error': 'Invalid toggle number'}), 404
+        return Response('error', status=404, mimetype='text/plain')
     toggles = get_toggles()
     toggle_name = TOGGLES[idx-1]
-    return jsonify({'name': toggle_name, 'state': toggles[toggle_name]})
+    return Response(str(toggles[toggle_name]).lower(), mimetype='text/plain')
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
