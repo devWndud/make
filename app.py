@@ -32,11 +32,37 @@ def set_toggle(name, state):
     conn.commit()
     conn.close()
 
+# --- 필기 요약 상태 DB 관리 ---
+def init_summary_db():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS summary_state (id INTEGER PRIMARY KEY, state INTEGER)''')
+    c.execute('SELECT COUNT(*) FROM summary_state')
+    if c.fetchone()[0] == 0:
+        c.execute('INSERT INTO summary_state (state) VALUES (0)')
+    conn.commit()
+    conn.close()
+
+def get_summary_state():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('SELECT state FROM summary_state WHERE id=1')
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else 0
+
+def set_summary_state(val):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('UPDATE summary_state SET state=? WHERE id=1', (int(val),))
+    conn.commit()
+    conn.close()
+
 @app.route('/api/toggles', methods=['GET'])
 def api_get_toggles():
     toggles = get_toggles()
-    # TOGGLES 순서대로 1(ON), 0(OFF) 문자열 생성
-    state_str = ''.join(['1' if toggles[name] else '0' for name in TOGGLES])
+    summary = get_summary_state()
+    state_str = str(summary) + ''.join(['1' if toggles[name] else '0' for name in TOGGLES])
     return Response(state_str, mimetype='text/plain')
 
 @app.route('/api/toggle', methods=['POST'])
@@ -59,6 +85,19 @@ def api_get_toggle(name):
     toggles = get_toggles()
     toggle_name = TOGGLES[idx-1]
     return Response(str(toggles[toggle_name]).lower(), mimetype='text/plain')
+
+@app.route('/api/summary', methods=['POST'])
+def api_set_summary():
+    set_summary_state(1)
+    return Response('ok', mimetype='text/plain')
+
+@app.route('/toggleset', methods=['POST'])
+def api_toggle_reset():
+    data = request.get_data(as_text=True)
+    if data.strip() == '2':
+        set_summary_state(0)
+        return Response('reset', mimetype='text/plain')
+    return Response('ignored', mimetype='text/plain')
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
@@ -171,6 +210,25 @@ def dashboard():
             font-weight: 700;
             letter-spacing: -0.5px;
         }
+        .summary-btn {
+            margin-top: 40px;
+            padding: 14px 38px;
+            background: #23272F;
+            color: #fff;
+            border: 2px solid #353B45;
+            border-radius: 16px;
+            font-size: 1.08rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+        }
+        .summary-btn:hover {
+            background: #353B45;
+            color: #b0b8c1;
+            border-color: #444B55;
+        }
     </style>
 </head>
 <body>
@@ -190,6 +248,7 @@ def dashboard():
             </div>
             {% endfor %}
         </div>
+        <button class="summary-btn" type="button" onclick="summaryClick()">필기 요약</button>
     </div>
     <script>
         function toggleSwitch(name, state) {
@@ -203,6 +262,11 @@ def dashboard():
                 }
             });
         }
+        function summaryClick() {
+            fetch('/api/summary', { method: 'POST' })
+                .then(res => res.text())
+                .then(txt => { /* 필요시 처리 */ });
+        }
     </script>
 </body>
 </html>
@@ -210,4 +274,5 @@ def dashboard():
 
 if __name__ == '__main__':
     init_db()
+    init_summary_db()
     app.run(host='0.0.0.0')  
