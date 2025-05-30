@@ -34,7 +34,10 @@ def set_toggle(name, state):
 
 @app.route('/api/toggles', methods=['GET'])
 def api_get_toggles():
-    return jsonify(get_toggles())
+    toggles = get_toggles()
+    # TOGGLES 순서대로 1(ON), 0(OFF) 문자열 생성
+    state_str = ''.join(['1' if toggles[name] else '0' for name in TOGGLES])
+    return Response(state_str, mimetype='text/plain')
 
 @app.route('/api/toggle', methods=['POST'])
 def api_set_toggle():
