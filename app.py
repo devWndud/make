@@ -9,11 +9,7 @@ CORS(app)
 
 @app.route('/test', methods=['POST', 'GET'])
 def Test():
-    try:
-        return jsonify({'success': True, 'response': "test"}), 200
-    except Exception as e:
-        print(traceback.format_exc())
-        return jsonify({'error': str(e)}), 500
+    return 1
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
