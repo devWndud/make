@@ -7,6 +7,14 @@ app = Flask(__name__)
 DB_PATH = 'toggle_state.db'
 TOGGLES = ['기능1', '기능2', '기능3']
 
+SUBJECT_IDS = {
+    '과학': '20389bb3-f2e8-80bc-b134-cdf9a02508b4',
+    '사회': '20389bb3-f2e8-80fc-ada3-c45f8a0b5e61',
+    '영어': '20389bb3-f2e8-806b-9a86-d1da5ff82bc2',
+    '수학': '20289bb3-f2e8-8014-8e27-e78ab9c44fc0',
+    '국어': '20389bb3-f2e8-806c-80cf-dc0e0014f7c1',
+}
+
 def init_db():
     if not os.path.exists(DB_PATH):
         conn = sqlite3.connect(DB_PATH)
@@ -270,6 +278,13 @@ def dashboard():
 </body>
 </html>
 ''', toggles=toggles, toggle_infos=toggle_infos)
+
+@app.route('/subject/<subject>', methods=['GET'])
+def get_subject_id(subject):
+    id = SUBJECT_IDS.get(subject)
+    if id:
+        return Response(id, mimetype='text/plain')
+    return Response('not found', status=404, mimetype='text/plain')
 
 if __name__ == '__main__':
     init_db()
