@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template_string, request, Response
 import sqlite3
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -97,7 +98,10 @@ def api_get_toggle(name):
 @app.route('/api/summary', methods=['POST'])
 def api_set_summary():
     set_summary_state(1)
-    print('[LOG] https://hook.us2.make.com/nfn1o12mipr44rbnh2ry70d39p26djsm')
+    try:
+        requests.post('https://hook.us2.make.com/nfn1o12mipr44rbnh2ry70d39p26djsm', timeout=3)
+    except Exception as e:
+        pass  # 실패해도 무시
     return Response('ok', mimetype='text/plain')
 
 @app.route('/toggleset/<val>', methods=['GET'])
