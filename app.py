@@ -7,10 +7,9 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/test', methods=['POST'])
+@app.route('/test', methods=['POST', 'GET'])
 def Test():
     try:
-        
         return jsonify({'success': True, 'response': "test"}), 200
     except Exception as e:
         print(traceback.format_exc())
