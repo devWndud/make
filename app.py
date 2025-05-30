@@ -11,7 +11,7 @@ CORS(app)
 def Test():
     try:
         
-        return jsonify({'success': True, 'response': response}), 200
+        return jsonify({'success': True, 'response': "test"}), 200
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
