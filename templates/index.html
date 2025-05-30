@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>필기 요약 자동화</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(80, 112, 255, 0.08);
+            padding: 40px 32px 32px 32px;
+            max-width: 420px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        label {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 8px;
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1.5px solid #c7d2fe;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 18px;
+            transition: border 0.2s;
+        }
+        textarea:focus {
+            border: 1.5px solid #6366f1;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:active {
+            background: #6366f1;
+        }
+        .result {
+            margin-top: 24px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 18px;
+            color: #334155;
+            font-size: 1.05rem;
+            min-height: 40px;
+            word-break: break-all;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 8px 16px 8px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>필기 요약 자동화</h1>
+        <form id="noteForm">
+            <label for="note">수업 필기를 입력하세요</label>
+            <textarea id="note" name="note" placeholder="여기에 필기를 입력하세요..." required></textarea>
+            <button type="submit">요약 요청</button>
+        </form>
+        <div class="result" id="result" style="display:none;"></div>
+    </div>
+    <script>
+        const form = document.getElementById('noteForm');
+        const resultDiv = document.getElementById('result');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const note = document.getElementById('note').value;
+            resultDiv.style.display = 'none';
+            resultDiv.textContent = '';
+            try {
+                const res = await fetch('/summarize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ note })
+                });
+                const data = await res.json();
+                resultDiv.textContent = data.summary;
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                resultDiv.textContent = '요약 요청에 실패했습니다.';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 
