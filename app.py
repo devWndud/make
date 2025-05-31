@@ -41,7 +41,7 @@ def set_toggle(name, state):
     conn.commit()
     conn.close()
 
-# --- 필기 요약 상태 DB 관리 ---
+# --- 필기 정리 상태 DB 관리 ---
 def init_summary_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -118,7 +118,7 @@ def dashboard():
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>필기 요약 프로그램</title>
+    <title>필기 정리 프로그램</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -153,8 +153,8 @@ def dashboard():
 </head>
 <body>
     <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
-        <h2 style="margin-bottom: 0;">필기 요약 프로그램</h2>
-        <button class="summary-btn" type="button" onclick="summaryClick()">요약</button>
+        <h2 style="margin-bottom: 0;">필기 정리 프로그램</h2>
+        <button class="summary-btn" type="button" onclick="summaryClick()">정리</button>
     </div>
     <script>
         function summaryClick() {
